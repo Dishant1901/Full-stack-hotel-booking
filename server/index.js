@@ -2,20 +2,25 @@ import express from 'express';
 import cors from "cors"
 import bcrypt from "bcryptjs"
 import mongoose from 'mongoose';
+import Jwt  from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 // importing files 
 import Dbconnection from './DbConnection.js';
 import UserModel from './models/userModel.js';
 dotenv.config();
 
 //
+// authentication and authorization keys
 const bcryptSalt = bcrypt.genSaltSync(8)
+const jwtSecret= 'qweFffs87*&hjsf'
 //
 
 const app = express();
 const PORT =4141;
 
 // middlewares
+app.use(cookieParser())
 app.use(express.json());
 app.use(cors({
     credentials:true,
@@ -62,7 +67,16 @@ app.post('/login',async(req, res)=>{
     if(userDoc){
         const passOk= bcrypt.compareSync(password,userDoc.password)
         if(passOk){
-            res.status(200).json('password ok')   
+            // jwt
+            Jwt.sign({
+                email:userDoc.email,
+                id:userDoc._id,
+            },jwtSecret,{},(err,token) => {
+                if(err) throw err;
+
+                res.cookie('token',token).json(userDoc)   
+
+            })
         }
         else{
             res.status(422).json('password not ok')
@@ -71,11 +85,17 @@ app.post('/login',async(req, res)=>{
     else{
         res.json('not found')
     } 
-    
-
   } catch (error) {
     alert("user not found")
   }
+})
+
+// method: get
+// URL : /profile
+// description : to login registered user
+app.get('/profile',(req,res)=>{
+    const{token} =req.cookies
+    res.json(token)
 })
 
 

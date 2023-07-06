@@ -1,27 +1,39 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import Header from '../components/Header'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import axios from 'axios'
+import { UserContext } from '../Context/UserContext'
 
 const LoginPage = () => {
+  // states 
   const [email,setEmail] =useState('')
   const [password,setPassword] = useState('')
+  const [toHomePage,setToHomePage] = useState(false)
+  const {setUser} =useContext(UserContext)
   //
   const handleSubmit =async(e)=>{
     e.preventDefault()
 
     try {
-      await axios.post('/login',{
+     const {data}= await axios.post('/login',{
         email,
         password,
       })
 
       alert('login successful')
+      setUser(data)
+
+      setToHomePage(true)
+
     } catch (error) {
       alert('login failed!')
     }
-
   }
+
+  if(toHomePage){
+    return <Navigate to={'/'}/>
+  }
+
   return (
     <>
     
