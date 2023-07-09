@@ -95,7 +95,17 @@ app.post('/login',async(req, res)=>{
 // description : to login registered user
 app.get('/profile',(req,res)=>{
     const{token} =req.cookies
-    res.json(token)
+
+    if(token){
+        Jwt.verify(token,jwtSecret,{},async(err,userData)=>{
+            if (err) throw err;
+            const {name,email,_id}= await user.findById(userData.id)
+            res.json({name,email,_id})
+
+        })
+    }else{
+        res.json(null).status(400)
+    }
 })
 
 
