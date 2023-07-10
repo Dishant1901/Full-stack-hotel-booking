@@ -21,7 +21,7 @@ const LoginPage = () => {
       })
 
       alert('login successful')
-      setUser(data)
+      setUser(data) // if not?
 
       setToHomePage(true)
 

@@ -34,7 +34,7 @@ const user=UserModel
 
 app.get('/',(req, res)=>{res.json({sucess:true})})
 
-// method: post
+// method: POST
 // URL : /register
 // description : to register new user
 app.post('/register', async(req, res)=>{
@@ -55,7 +55,7 @@ app.post('/register', async(req, res)=>{
     
 })
 
-// method: post
+// method: POST
 // URL : /login
 // description : to login registered user
 app.post('/login',async(req, res)=>{
@@ -90,12 +90,31 @@ app.post('/login',async(req, res)=>{
   }
 })
 
-// method: get
+// method: GET
 // URL : /profile
 // description : to login registered user
 app.get('/profile',(req,res)=>{
     const{token} =req.cookies
-    res.json(token)
+
+    if(token){
+        Jwt.verify(token,jwtSecret,{},async(err,userData)=>{
+            if (err) throw err;
+            const {name,email,_id}= await user.findById(userData.id)
+            res.json({name,email,_id})
+
+        })
+    }else{
+        res.json(null).status(400)
+    }
+})
+
+// method: POST
+// URL : /logout
+// description : to logout  user
+app.post('/logout',(req, res)=>{
+    res.cookie('token','').json('user Logged Out')
+    
+
 })
 
 
