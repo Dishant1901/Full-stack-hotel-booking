@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import axios from 'axios'
 
 const RegisterPage = () => {
@@ -7,6 +7,7 @@ const RegisterPage = () => {
   const [name,setName]=useState('');
   const [email,setEmail]=useState('');
   const [password,setPassword]=useState('');
+  const [login,setLogin]=useState(false)
 
  const registerUser =async (e)=>{
     e.preventDefault();
@@ -19,6 +20,7 @@ const RegisterPage = () => {
       })
   
       alert(`User registrated successfully`)
+      setLogin(true);
       
     } catch (error) {
       alert("Registration failed!") 
@@ -28,6 +30,9 @@ const RegisterPage = () => {
 
   }
   
+  if(login){
+    return <Navigate to={'/login'} />
+  }
   return (
         <div className='mt-4 grow flex items-center justify-center '>
 
@@ -56,6 +61,7 @@ const RegisterPage = () => {
     <div className='text-center mt-4'>Already a user? <span className=' text-primary '> <Link to={'/login'} >Login</Link> </span> here</div>
 </form>
 </div>
+
 
 
 </div>
