@@ -5,6 +5,10 @@ import mongoose from 'mongoose';
 import Jwt  from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import imageDownloader from 'image-downloader'
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
 // importing files 
 import Dbconnection from './DbConnection.js';
 import UserModel from './models/userModel.js';
@@ -31,6 +35,10 @@ app.use(cors({
 Dbconnection();
 // defining user model
 const user=UserModel
+
+// Get the directory name
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 app.get('/',(req, res)=>{res.json({sucess:true})})
 
@@ -90,6 +98,7 @@ app.post('/login',async(req, res)=>{
   }
 })
 
+
 // method: GET
 // URL : /profile
 // description : to login registered user
@@ -108,14 +117,25 @@ app.get('/profile',(req,res)=>{
     }
 })
 
-// method: POST
-// URL : /logout
-// description : to logout  user
-app.post('/logout',(req, res)=>{
-    res.cookie('token','').json('user Logged Out')
-    
+
+app.post('/upload', async(req,res)=>{
+    const {link} = req.body;
+    const newName= 'photo'+ Date.now()+'.jpg';
+
+    await imageDownloader.image({
+        url: link,
+        dest: __dirname +'/uploads/'+newName,
+    })
+    // console.log(__dirname)
+    res.json(newName)
+    // const {link} =req.body
+
+    // // res.json({dest:link, message: 'sucesss'})
+    // console.log('working')
 
 })
+
+
 
 
 app.listen(PORT,()=>{

@@ -5,15 +5,25 @@ body{
     /* background:rgb(255, 255, 254); */
 }
 
-input[type='text'] , input[type='email'] , input[type='password']{
+input[type='text'] , input[type='email'] , input[type='password'],input[type='number'],textarea{
     @apply w-full border my-2 py-2 px-4 rounded-2xl
-} 
+}
 
 button{
     @apply bg-gray-300  
 }
 
 button.primary{
-    background-color:#FF385C ;
+     
     @apply bg-primary w-full p-3 text-white rounded-2xl
 }
+ 
+/* input[type="checkbox"] {
+    @apply p
+}  */
+
+/* input.primary{
+    @apply text-primary
+} */
+
+  

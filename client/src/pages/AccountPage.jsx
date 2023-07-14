@@ -8,7 +8,7 @@ const AccountPage = () => {
   const { user, ready, setUser } = useContext(UserContext);
   const [toHome, setToHome] = useState(null);
   let { subpage } = useParams();
-  console.log(subpage);
+  // console.log(subpage);
   if (subpage === undefined) {
     subpage = "profile";
   }
