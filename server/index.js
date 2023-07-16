@@ -40,6 +40,8 @@ const user=UserModel
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+app.use('/uploads', express.static(__dirname + '/uploads'))
+
 app.get('/',(req, res)=>{res.json({sucess:true})})
 
 // method: POST

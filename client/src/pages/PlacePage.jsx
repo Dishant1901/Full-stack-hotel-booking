@@ -34,15 +34,15 @@ const PlacePage = () => {
     // function to upload image by link
     const addByLink =async(e)=>{
       e.preventDefault();
-      await axios.post('/upload',{link: photoLink})
-    //   e.preventDefault();
-    //  const {data}= axios.post('/uploadlink',{
-    //     link: photoLink,
-    //   })
+      const {data:fileName}=await axios.post('/upload',{link: photoLink})
+      setAddedPhotos(prev=>{
+        console.log(fileName)
+        return [...prev,fileName];
+      })
 
-      
+      setPhotoLink('') 
     }
-    console.log(action)
+    // console.log(action)
   return (
     <>
 
@@ -84,19 +84,27 @@ const PlacePage = () => {
                <input type="text" value={address} onChange={e=> setAddress(e.target.value)} placeholder="address" />
 
                 {preInput('Photos','Series of photos of this place')}
-               
-                <div className="flex gap-2  ">
+
+               {/* upload via link  */}
+                <div className="flex gap-2 mb-4  ">
                   <input type="text" value={photoLink}  onChange={e=> setPhotoLink(e.target.value)} placeholder="Add photos using link...."  />
                   <button onClick={addByLink}  className="bg-gray-200 px-4 rounded-2xl  ">Add&nbsp;photo</button>
                 </div>
-                <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                  <button  className="border flex justify-center gap-1 bg-transparent rounded-2xl p-8 text-gray-600 text-2xl">
+                <div className="grid gap-2  grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+                  {addedPhotos.length >0 && addedPhotos.map(photo =>(
+                    <div className="" >
+                     <img className=" h-44 w-80 rounded-2xl" src={'http://localhost:4141/uploads/'+photo} alt="" />
+                    </div>
+                  ))}
+                  {/* upload via button  */}
+                  <label   className=" cursor-pointer border flex justify-center items-center gap-1 bg-transparent rounded-2xl p-8 text-gray-600 text-2xl">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                   </svg>
+                  <input type="file" className="hidden" />
 
                     Upload
-                    </button>
+                    </label>
                 </div>
                 {preInput('Description','Description of your palces')}
                 <textarea value={description} onChange={e=> setDescription(e.target.value)} className=" h-32" />
@@ -131,9 +139,6 @@ const PlacePage = () => {
               </form>
             </div>
         )}
-        
-      
-
     </>
   );
 };
