@@ -8,6 +8,8 @@ import cookieParser from 'cookie-parser';
 import imageDownloader from 'image-downloader'
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import multer from 'multer';
+import fs from 'fs';
 
 // importing files 
 import Dbconnection from './DbConnection.js';
@@ -135,6 +137,28 @@ app.post('/upload', async(req,res)=>{
     // // res.json({dest:link, message: 'sucesss'})
     // console.log('working')
 
+})
+// const newName= 'photo'+ Date.now()+'.jpg';
+
+const photoMiddleware = multer({dest:'uploads/'})
+
+app.post('/uploadPhoto', photoMiddleware.array('photos',10),(req,res) => {
+   
+    const uploadFiles=[]; // empty array 
+    for(let i=0; i<req.files.length; i++)
+    {
+        const {path,originalname}= req.files[i];
+        const parts = originalname.split('.'); // taking file extension
+        const ext= parts[parts.length-1];
+        const newPath = path + '.' +ext;
+
+        fs.renameSync(path, newPath);
+
+        uploadFiles.push(newPath.replace('uploads\\',''));
+
+        console.log( ' this is being sent as response....',uploadFiles, ' this is req.files....', req.files);
+    }
+    res.json(uploadFiles);
 })
 
 

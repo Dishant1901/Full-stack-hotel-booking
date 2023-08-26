@@ -42,7 +42,27 @@ const PlacePage = () => {
 
       setPhotoLink('') 
     }
-    // console.log(action)
+    
+    // upload by buttopn using multer
+    const uploadPhoto =(e)=>{
+      // e.preventDefault();
+      const files = e.target.files;
+      const data = new FormData();
+      for(let i =0;i<files.length;i++){
+
+        data.append('photos',files[i])
+      }
+
+      axios.post('/uploadPhoto',data,{
+        headers:{'Content-Type': 'multipart/form-data'}
+      }).then(response =>{
+          const {data:fileNames}= response;
+          setAddedPhotos(prev=>{
+            return [...prev, ...fileNames];
+          })
+        })
+    }
+
   return (
     <>
 
@@ -101,10 +121,11 @@ const PlacePage = () => {
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                   </svg>
-                  <input type="file" className="hidden" />
+                  <input type="file" multiple onChange={uploadPhoto} className="hidden"  />
 
                     Upload
                     </label>
+                    
                 </div>
                 {preInput('Description','Description of your palces')}
                 <textarea value={description} onChange={e=> setDescription(e.target.value)} className=" h-32" />
