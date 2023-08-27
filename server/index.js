@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { response } from 'express';
 import cors from "cors"
 import bcrypt from "bcryptjs"
 import mongoose from 'mongoose';
@@ -14,6 +14,7 @@ import fs from 'fs';
 // importing files 
 import Dbconnection from './DbConnection.js';
 import UserModel from './models/userModel.js';
+import PlaceModel from './models/placesModel.js';
 dotenv.config();
 
 //
@@ -32,11 +33,13 @@ app.use(cors({
     credentials:true,
     origin: 'http://localhost:5173',
 }))
+const photoMiddleware = multer({dest:'uploads/'})
 
 // DB connection 
 Dbconnection();
 // defining user model
 const user=UserModel
+const place=PlaceModel
 
 // Get the directory name
 const __filename = fileURLToPath(import.meta.url);
@@ -102,10 +105,20 @@ app.post('/login',async(req, res)=>{
   }
 })
 
+// method: POST
+// URL : /logout
+// description : to logout  user
+app.post('/logout',(req, res)=>{
+    res.cookie('token','').json('user Logged Out')
+    
+
+})
+
+
 
 // method: GET
 // URL : /profile
-// description : to login registered user
+// description : To login registered user
 app.get('/profile',(req,res)=>{
     const{token} =req.cookies
 
@@ -121,7 +134,9 @@ app.get('/profile',(req,res)=>{
     }
 })
 
-
+// method: POST
+// URL : /upload
+// description : To upload image by link
 app.post('/upload', async(req,res)=>{
     const {link} = req.body;
     const newName= 'photo'+ Date.now()+'.jpg';
@@ -138,10 +153,11 @@ app.post('/upload', async(req,res)=>{
     // console.log('working')
 
 })
-// const newName= 'photo'+ Date.now()+'.jpg';
 
-const photoMiddleware = multer({dest:'uploads/'})
 
+// method: POST
+// URL : /uploadPhoto
+// description : To upload image by button
 app.post('/uploadPhoto', photoMiddleware.array('photos',10),(req,res) => {
    
     const uploadFiles=[]; // empty array 
@@ -156,11 +172,97 @@ app.post('/uploadPhoto', photoMiddleware.array('photos',10),(req,res) => {
 
         uploadFiles.push(newPath.replace('uploads\\',''));
 
-        console.log( ' this is being sent as response....',uploadFiles, ' this is req.files....', req.files);
+        // console.log( ' this is being sent as response....',uploadFiles, ' this is req.files....', req.files);
     }
     res.json(uploadFiles);
 })
 
+
+// method: POST
+// URL : /places
+// description : To save place Form data
+app.post('/places',async(req,res) => {
+    const{token} = req.cookies;
+    const {
+        title,address,addedPhotos,description,price,
+        perks,extraInfo,checkIn,checkOut,maxGuest,
+      } = req.body;
+      //
+      
+    Jwt.verify(token,jwtSecret,{},async (err,userData)=>{
+        if(err) throw err;
+
+      const placeDoc= await place.create({
+            owner: userData.id,title,address, 
+            photos:addedPhotos,description,
+            price,perks,extraInfo,
+            checkIn,checkOut,maxGuest,
+
+        })
+        console.log(placeDoc)
+        res.json(placeDoc)
+    })
+    
+})
+
+// method: GET
+// URL : /places
+// description : To get all places ownerd by user
+app.get('/user-places',(req,res)=>{
+    const {token} = req.cookies;
+
+    Jwt.verify(token,jwtSecret,{},async (err,UserData)=>{
+       const {id}  = UserData;
+
+        res.json(await place.find({owner: id})) // ye dyan rkhna , ange bht kam ayega tumko
+
+    })
+})
+
+// method: GET
+// URL : /places:id
+// description : To get  places by id
+// Parameter : id
+app.get('/places/:id',async (req,res)=>{
+    const {id} = req.params;
+
+    res.json(await place.findById(id));
+})
+
+// method: PUT
+// URL : /places
+// description : To update  places by id
+// Parameter : NONE
+app.put('/places',async (req,res)=>{
+    const {token} = req.cookies;
+
+    const { id,title,address,addedPhotos,description,price,
+        perks,extraInfo,checkIn,checkOut,maxGuest,
+      } = req.body;
+
+      Jwt.verify(token,jwtSecret,{},async(err,userData)=>{
+        if(err) throw err;
+        const placeDoc= await place.findById(id);
+        if(userData.id === placeDoc.owner.toString()) {
+
+            placeDoc.set ({title,address,photos:addedPhotos,
+                description,price,
+                perks,extraInfo,checkIn,checkOut,maxGuest,
+              });
+
+            placeDoc.save();
+            res.json('ok')
+        } 
+      })
+})
+
+// method: GET
+// URL : /places
+// description : To get all places in DB
+// Parameter : NONE
+app.get('/places',async(req, res) => {
+    res.json(await place.find())
+})
 
 
 
