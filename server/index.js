@@ -15,6 +15,7 @@ import fs from 'fs';
 import Dbconnection from './DbConnection.js';
 import UserModel from './models/userModel.js';
 import PlaceModel from './models/placesModel.js';
+import BookingModel from './models/booking.js';
 dotenv.config();
 
 //
@@ -40,6 +41,7 @@ Dbconnection();
 // defining user model
 const user=UserModel
 const place=PlaceModel
+const booking = BookingModel
 
 // Get the directory name
 const __filename = fileURLToPath(import.meta.url);
@@ -262,6 +264,43 @@ app.put('/places',async (req,res)=>{
 // Parameter : NONE
 app.get('/places',async(req, res) => {
     res.json(await place.find())
+})
+
+function getUserDataFromReq(req) {
+    return new Promise((resolve, reject) => {
+        Jwt.verify(req.cookies.token, jwtSecret, {}, async (err, userData) => {
+        if (err) throw err;
+        resolve(userData);
+      });
+    });
+  }
+
+// method: POST
+// URL : /bookings'
+// description : To Book a place by user
+// Parameter : NONE
+app.post('/bookings',async(req, res) => {
+    const userData = await getUserDataFromReq(req);
+  const {
+    place,checkIn,checkOut,numberOfGuests,name,phone,price,
+  } = req.body;
+  booking.create({
+    place,checkIn,checkOut,numberOfGuests,name,phone,price,
+    user:userData.id,
+  }).then((doc) => {
+    res.json(doc);
+  }).catch((err) => {
+    throw err;
+  });
+})
+
+// method: GET
+// URL : /bookings'
+// description : To Book a place by user
+// Parameter : NONE
+app.get('/bookings', async(req, res) => {
+    const userData = await getUserDataFromReq(req);
+    res.json(await booking.find({user: userData.id}).populate('place')); // this is very bindas bidu
 })
 
 

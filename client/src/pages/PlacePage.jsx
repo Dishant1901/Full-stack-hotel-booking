@@ -5,6 +5,7 @@ import axios from "axios";
 import PhotosUploader from "../components/PhotosUploader";
 import PlaceFormPage from "./PlaceFormPage";
 import AccountNav from "../AccountNav";
+import PlaceImg from "../components/placeImg";
 
 const PlacePage = () => {
   const [places,setPlaces] = useState([]);
@@ -51,15 +52,13 @@ const PlacePage = () => {
 
           {/* Displaying places  */}
           {places.length > 0 && places.map(place =>(
+            
           <Link to={'/account/places/'+place._id}>
             <div className="flex mt-4 cursor-pointer bg-gray-100 gap-4 p-4 rounded-2xl">
               {/* for image */}
               <div className="flex bg-gray-300 w-32 h-32  ">
               {/* grow shrink-0  */}
-                {place.photos.length >0 && (
-                  <img className=" object-cover" src={ 'http://localhost:4141/uploads/'+ place.photos[0]} alt="" />
-                 
-                  )}
+                <PlaceImg place={place}  />
               </div>
               
               {/* Title and Description */}
