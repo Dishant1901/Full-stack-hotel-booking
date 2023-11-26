@@ -1,8 +1,8 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import AccountNav from '../AccountNav';
-import PlaceImg from '../components/placeImg';
-import { format } from 'date-fns';
+import PlaceImg from '../components/PlaceImg';
+// import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import BookingDates from '../components/BookingsDates';
 

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Perks from "../components/perks";
+// import Perks from "../components/perks";
 import axios from "axios";
-import PhotosUploader from "../components/PhotosUploader";
-import PlaceFormPage from "./PlaceFormPage";
+// import PhotosUploader from "../components/PhotosUploader";
+// import PlaceFormPage from "./PlaceFormPage";
 import AccountNav from "../AccountNav";
-import PlaceImg from "../components/placeImg";
+import PlaceImg from "../components/PlaceImg";
 
 const PlacePage = () => {
   const [places,setPlaces] = useState([]);

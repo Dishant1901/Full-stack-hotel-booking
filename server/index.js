@@ -1,7 +1,7 @@
 import express, { response } from 'express';
 import cors from "cors"
 import bcrypt from "bcryptjs"
-import mongoose from 'mongoose';
+// import mongoose from 'mongoose';
 import Jwt  from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Navigate, Link, useParams, useLocation } from "react-router-dom";
+import { Navigate, Link,  useLocation } from "react-router-dom";
 
 const AccountNav = () => {
     const{pathname} = useLocation();
